@@ -7,8 +7,7 @@ import json
 class PeptideFolding:
     def __init__(self):
         self.models = {
-            'esmfold': self.predict_esmfold,
-            'omegafold': self.predict_omegafold,
+            'esmfold': self.predict_esmfold
             # We'll add others back as we implement them properly
         }
         
@@ -42,6 +41,7 @@ class PeptideFolding:
     """
     AlphaFold 3 model: https://github.com/deepmind/alphafold
     Prediction was done via the AlphaFold webserver interface: https://alphafoldserver.com/
+    Output is in mmCIF format. Seed: 42.
     """       
 
     def predict_structures(self, protein_data: Dict, output_dir: str = "structures"):
