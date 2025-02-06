@@ -5,6 +5,7 @@ import requests
 import tempfile
 import os
 from typing import List, Tuple, Dict
+import json
 
 class SactibondEvaluator:
     def __init__(self):
@@ -182,17 +183,18 @@ class SactibondEvaluator:
 
 # Update example usage
 if __name__ == "__main__":
-    # Dictionary of test sequences with their sactibond pairs
+    # Load protein data from JSON
+    try:
+        with open('sactipeptides.json', 'r') as f:
+            protein_data = json.load(f)
+    except FileNotFoundError:
+        print("Error: sactipeptides.json not found!")
+        exit(1)
+        
+    # Convert JSON data to format needed by evaluate_multiple_sequences
     test_sequences = {
-        'subtilosin_A': (
-            "NKGCATCSIGIACLVDGPIPDFECAGATGLGLWG",
-            [(4, 31), (7, 28), (13, 22)]
-        ),
-        'thurincin_H': (
-            "DWTCWSCLVCAACSVELLNLVTAATGASTAS",
-            [(4, 28), (7, 25), (10, 22), (13, 19)]
-        ),
-        # Add more sequences here. Source: https://www.sciencedirect.com/science/article/pii/S1367593113001269
+        name: (data['sequence'], data['sactibonds']) 
+        for name, data in protein_data.items()
     }
     
     evaluator = SactibondEvaluator()

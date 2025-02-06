@@ -1,0 +1,22 @@
+{
+    "subtilosin_A": {
+        "sequence": "NKGCATCSIGIACLVDGPIPDFECAGATGLGLWG",
+        "sactibonds": [[4, 31], [7, 28], [13, 22]],
+        "source": "B. subtilis"
+    },
+    "thurincin_H": {
+        "sequence": "DWTCWSCLVCAACSVELLNLVTAATGASTAS",
+        "sactibonds": [[4, 28], [7, 25], [10, 22], [13, 19]],
+        "source": "B. thuringiensis"
+    },
+    "thuricin_CD_alpha": {
+        "sequence": "GNAACVIGCIGSCVISEGIGSLVGTAFDLG",
+        "sactibonds": [[5, 28], [9, 25], [13, 21]],
+        "source": "B. thuringiensis"
+    },
+    "thuricin_CD_beta": {
+        "sequence": "GWVACVGACGTVCLASGGVGTEFAAASDFL",
+        "sactibonds": [[5, 28], [9, 25], [13, 21]],
+        "source": "B. thuringiensis"
+    }
+}
