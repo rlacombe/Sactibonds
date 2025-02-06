@@ -77,12 +77,30 @@ class SactibondEvaluator:
             
         return distances
 
+    def calculate_sacti_rmsd(self, distances: List[float], ideal_distance: float = 1.81) -> float:
+        """
+        Calculate RMSD between predicted sactibond distances and ideal distance.
+        
+        Args:
+            distances: List of predicted distances in Angstroms
+            ideal_distance: Theoretical ideal distance (default 1.81 Å)
+            
+        Returns:
+            RMSD value in Angstroms
+        """
+        # Calculate squared differences from ideal distance
+        squared_diffs = [(d - ideal_distance)**2 for d in distances]
+        # Calculate mean and take square root
+        rmsd = np.sqrt(np.mean(squared_diffs))
+        return rmsd
+
     def evaluate_sequence(self, sequence: str, 
                          sactibond_pairs: List[Tuple[int, int]], 
-                         models: List[str] = None) -> Dict[str, List[float]]:
+                         models: List[str] = None) -> Dict[str, Dict[str, float]]:
         """
         Evaluate a sequence using specified models
         sactibond_pairs: List of (donor_position, acceptor_position) pairs
+        Returns: Dict with distances and RMSD for each model
         """
         if models is None:
             models = list(self.models.keys())
@@ -101,24 +119,93 @@ class SactibondEvaluator:
             acceptor_positions = [pair[1] for pair in sactibond_pairs]
             distances = self.calculate_distances(pdb_path, donor_positions, acceptor_positions)
             
-            results[model_name] = distances
+            # Calculate RMSD
+            rmsd = self.calculate_sacti_rmsd(distances)
+            
+            results[model_name] = {
+                'distances': distances,
+                'sacti_rmsd': rmsd
+            }
             
             # Cleanup
             os.unlink(pdb_path)
             
         return results
 
-# Example usage
+    def evaluate_multiple_sequences(self, sequences: Dict[str, Tuple[str, List[Tuple[int, int]]]], 
+                                  models: List[str] = None) -> Dict[str, Dict[str, float]]:
+        """
+        Evaluate multiple sequences and calculate average metrics
+        
+        Args:
+            sequences: Dictionary of form {
+                'protein_name': (sequence, [(donor1, acceptor1), (donor2, acceptor2), ...])
+            }
+            models: List of model names to use
+            
+        Returns:
+            Dictionary containing per-model metrics including:
+            - average_rmsd
+            - per_protein_results
+        """
+        if models is None:
+            models = list(self.models.keys())
+            
+        results = {model: {
+            'average_rmsd': 0.0,
+            'per_protein_results': {}
+        } for model in models}
+        
+        for protein_name, (sequence, sactibond_pairs) in sequences.items():
+            print(f"\nEvaluating {protein_name}...")
+            
+            try:
+                protein_results = self.evaluate_sequence(sequence, sactibond_pairs, models)
+                
+                # Store results for each model
+                for model in models:
+                    results[model]['per_protein_results'][protein_name] = protein_results[model]
+                    
+            except Exception as e:
+                print(f"Error processing {protein_name}: {str(e)}")
+                continue
+        
+        # Calculate average RMSD for each model
+        for model in models:
+            rmsds = [data['sacti_rmsd'] 
+                    for data in results[model]['per_protein_results'].values()]
+            if rmsds:
+                results[model]['average_rmsd'] = np.mean(rmsds)
+                results[model]['std_rmsd'] = np.std(rmsds)
+            
+        return results
+
+# Update example usage
 if __name__ == "__main__":
-    # Example sequence and known sactibond pairs: subtilosin A
-    sequence = "NKGCATCSIGIACLVDGPIPDFECAGATGLGLWG" # Subtilosin A sequence. Source: https://www.uniprot.org/uniprotkb/C0HLK6/entry#sequences
-    sactibond_pairs = [(4, 31), (7, 28), (13, 22)]  # Known sactibond pairs. Source: https://pubmed.ncbi.nlm.nih.gov/15035610/
+    # Dictionary of test sequences with their sactibond pairs
+    test_sequences = {
+        'subtilosin_A': (
+            "NKGCATCSIGIACLVDGPIPDFECAGATGLGLWG",
+            [(4, 31), (7, 28), (13, 22)]
+        ),
+        'thurincin_H': (
+            "DWTCWSCLVCAACSVELLNLVTAATGASTAS",
+            [(4, 28), (7, 25), (10, 22), (13, 19)]
+        ),
+        # Add more sequences here. Source: https://www.sciencedirect.com/science/article/pii/S1367593113001269
+    }
     
     evaluator = SactibondEvaluator()
-    results = evaluator.evaluate_sequence(sequence, sactibond_pairs)
+    results = evaluator.evaluate_multiple_sequences(test_sequences)
     
     # Print results
-    for model, distances in results.items():
-        print(f"\n{model} results:")
-        for (donor, acceptor), distance in zip(sactibond_pairs, distances):
-            print(f"Distance between Cys{donor} and position {acceptor}: {distance:.2f} Å") 
+    for model, data in results.items():
+        print(f"\n{model} Results:")
+        print(f"Average Sacti-RMSD: {data['average_rmsd']:.2f} ± {data['std_rmsd']:.2f} Å")
+        print("\nPer-protein results:")
+        for protein, protein_data in data['per_protein_results'].items():
+            print(f"\n{protein}:")
+            print(f"  Sacti-RMSD: {protein_data['sacti_rmsd']:.2f} Å")
+            print("  Individual distances:")
+            for distance in protein_data['distances']:
+                print(f"    {distance:.2f} Å") 
