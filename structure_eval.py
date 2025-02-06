@@ -1,4 +1,4 @@
-import biotite.structure.io.pdb as pdb
+import biotite.structure.io as strucio  # Changed import to use general IO
 import biotite.structure as struc
 import numpy as np
 import os
@@ -6,19 +6,30 @@ from typing import List, Tuple, Dict
 import json
 
 class SactibondEvaluator:
-    def calculate_distances(self, pdb_path: str, donor_positions: List[int], 
+    def load_structure(self, file_path: str):
+        """
+        Load structure from either PDB or mmCIF file.
+        """
+        try:
+            # Use general structure loader
+            structure = strucio.load_structure(file_path)
+            
+            # If we have multiple models, take the first one
+            if isinstance(structure, struc.AtomArrayStack):
+                structure = structure[0]
+                
+            return structure
+            
+        except Exception as e:
+            raise ValueError(f"Failed to load structure from {file_path}: {str(e)}")
+
+    def calculate_distances(self, file_path: str, donor_positions: List[int], 
                           acceptor_positions: List[int]) -> List[float]:
         """
         Calculate distances between Cys-S and acceptor C-alpha atoms.
+        Supports both PDB and mmCIF formats.
         """
-
-        # Load structure
-        structure = pdb.PDBFile.read(pdb_path)
-        structure = structure.get_structure()
-        
-        # If we have multiple models, take the first one
-        if isinstance(structure, struc.AtomArrayStack):
-            structure = structure[0]
+        structure = self.load_structure(file_path)
         
         # Extract coordinates
         distances = []
@@ -52,7 +63,7 @@ class SactibondEvaluator:
         rmsd = np.sqrt(np.mean(squared_diffs))
         return rmsd
 
-    def evaluate_structure(self, pdb_path: str, 
+    def evaluate_structure(self, file_path: str, 
                          sactibond_pairs: List[Tuple[int, int]]) -> Dict[str, float]:
         """
         Evaluate a single structure given the path to the PDB file and the sactibond pairs.
@@ -61,7 +72,7 @@ class SactibondEvaluator:
         donor_positions = [pair[0] for pair in sactibond_pairs]
         acceptor_positions = [pair[1] for pair in sactibond_pairs]
         
-        distances = self.calculate_distances(pdb_path, donor_positions, acceptor_positions)
+        distances = self.calculate_distances(file_path, donor_positions, acceptor_positions)
         rmsd = self.calculate_sacti_rmsd(distances)
         
         return {
@@ -73,15 +84,25 @@ class SactibondEvaluator:
         """
         Evaluate all structures in the structures directory.
         """
-        
         results = {}
         
         for filename in os.listdir(structures_dir):
-            if not filename.endswith('.pdb'):
+            if not filename.endswith(('.pdb', '.cif')):
                 continue
                 
-            # Parse filename to get model and protein name
-            model_name, protein_name = filename[:-4].split('_', 1)
+            # Parse filename to get model and protein name (remove either .pdb or .cif extension)
+            model_name, protein_name = filename.rsplit('.', 1)[0].split('_', 1)
+            
+            # Try to find the matching protein name in protein_data
+            protein_key = None
+            for key in protein_data.keys():
+                if key.lower().replace('i', '') == protein_name.lower().replace('i', ''):
+                    protein_key = key
+                    break
+                
+            if protein_key is None:
+                print(f"Warning: No matching protein data found for {protein_name}")
+                continue
             
             if model_name not in results:
                 results[model_name] = {
@@ -91,12 +112,12 @@ class SactibondEvaluator:
                 }
             
             try:
-                pdb_path = os.path.join(structures_dir, filename)
+                file_path = os.path.join(structures_dir, filename)
                 protein_results = self.evaluate_structure(
-                    pdb_path, 
-                    protein_data[protein_name]['sactibonds']
+                    file_path, 
+                    protein_data[protein_key]['sactibonds']
                 )
-                results[model_name]['per_protein_results'][protein_name] = protein_results
+                results[model_name]['per_protein_results'][protein_key] = protein_results
                 
             except Exception as e:
                 print(f"Error evaluating {filename}: {str(e)}")

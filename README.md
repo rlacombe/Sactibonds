@@ -17,12 +17,23 @@ python structure_eval.py
 
 ### Sources
 
-Sactibond structures for the following peptides were taken from:
+Sactibond structures for the following peptides:
 
 - Subtilosin A
 - Thuringin H
 - Thuringin CD alpha
 - Thuringin CD beta
+
+Taken from:
+
 [Flühe L, Marahiel MA. Radical S-adenosylmethionine enzyme catalyzed thioether bond formation in sactipeptide biosynthesis. Curr Opin Chem Biol. 2013;17(4):605-612. doi:10.1016/j.cbpa.2013.06.031](https://www.sciencedirect.com/science/article/pii/S1367593113001269)
+
+
+### Models
+
+Models evaluated to date:
+
+- ESMFold: https://github.com/facebookresearch/esm
+- AlphaFold 3: https://github.com/deepmind/alphafold
 
 
