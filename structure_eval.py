@@ -14,6 +14,16 @@ class SactibondEvaluator:
             # Add other models as we implement them
         }
         
+    def read_fasta(self, fasta_path: str) -> str:
+        """
+        Read sequence from FASTA file
+        """
+        with open(fasta_path, 'r') as f:
+            lines = f.readlines()
+            # Skip header and join sequence lines
+            sequence = ''.join(line.strip() for line in lines if not line.startswith('>'))
+        return sequence
+        
     def predict_esmfold(self, sequence: str) -> str:
         """
         Predict structure using ESMFold API
@@ -52,7 +62,6 @@ class SactibondEvaluator:
         # Extract coordinates
         distances = []
         for donor, acceptor in zip(donor_positions, acceptor_positions):
-            # No need to convert to 0-based indexing anymore
             donor_mask = structure.res_id == donor
             acceptor_mask = structure.res_id == acceptor
             
@@ -95,18 +104,17 @@ class SactibondEvaluator:
         rmsd = np.sqrt(np.mean(squared_diffs))
         return rmsd
 
-    def evaluate_sequence(self, sequence: str, 
+    def evaluate_sequence(self, fasta_path: str, 
                          sactibond_pairs: List[Tuple[int, int]], 
                          models: List[str] = None) -> Dict[str, Dict[str, float]]:
         """
         Evaluate a sequence using specified models
-        sactibond_pairs: List of (donor_position, acceptor_position) pairs
-        Returns: Dict with distances and RMSD for each model
         """
         if models is None:
             models = list(self.models.keys())
             
         results = {}
+        sequence = self.read_fasta(fasta_path)
         
         for model_name in models:
             if model_name not in self.models:
@@ -133,21 +141,10 @@ class SactibondEvaluator:
             
         return results
 
-    def evaluate_multiple_sequences(self, sequences: Dict[str, Tuple[str, List[Tuple[int, int]]]], 
+    def evaluate_multiple_sequences(self, protein_data: Dict[str, Dict], 
                                   models: List[str] = None) -> Dict[str, Dict[str, float]]:
         """
         Evaluate multiple sequences and calculate average metrics
-        
-        Args:
-            sequences: Dictionary of form {
-                'protein_name': (sequence, [(donor1, acceptor1), (donor2, acceptor2), ...])
-            }
-            models: List of model names to use
-            
-        Returns:
-            Dictionary containing per-model metrics including:
-            - average_rmsd
-            - per_protein_results
         """
         if models is None:
             models = list(self.models.keys())
@@ -157,11 +154,11 @@ class SactibondEvaluator:
             'per_protein_results': {}
         } for model in models}
         
-        for protein_name, (sequence, sactibond_pairs) in sequences.items():
+        for protein_name, data in protein_data.items():
             print(f"\nEvaluating {protein_name}...")
             
             try:
-                protein_results = self.evaluate_sequence(sequence, sactibond_pairs, models)
+                protein_results = self.evaluate_sequence(data['fasta'], data['sactibonds'], models)
                 
                 # Store results for each model
                 for model in models:
@@ -191,14 +188,8 @@ if __name__ == "__main__":
         print("Error: sactipeptides.json not found!")
         exit(1)
         
-    # Convert JSON data to format needed by evaluate_multiple_sequences
-    test_sequences = {
-        name: (data['sequence'], data['sactibonds']) 
-        for name, data in protein_data.items()
-    }
-    
     evaluator = SactibondEvaluator()
-    results = evaluator.evaluate_multiple_sequences(test_sequences)
+    results = evaluator.evaluate_multiple_sequences(protein_data)
     
     # Print results
     for model, data in results.items():
