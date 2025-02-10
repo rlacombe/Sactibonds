@@ -4,6 +4,7 @@ import numpy as np
 import os
 from typing import List, Tuple, Dict, Set
 import json
+import argparse
 
 class BondPredictor:
     def __init__(self, max_distance: float = 5.43):
@@ -57,9 +58,22 @@ class BondPredictor:
         false_positives = len(predicted_set - reference_set)
         false_negatives = len(reference_set - predicted_set)
         
-        precision = true_positives / (true_positives + false_positives) if predicted_set else 0
-        recall = true_positives / (true_positives + false_negatives) if reference_set else 0
-        f1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
+        # Calculate metrics, handling edge cases
+        if len(predicted_set) > 0:
+            precision = true_positives / len(predicted_set)
+        else:
+            precision = 0.0  # No bonds predicted
+        
+        if len(reference_set) > 0:
+            recall = true_positives / len(reference_set)
+        else:
+            recall = 0.0  # No reference bonds
+        
+        # Calculate F1 score
+        if precision + recall > 0:
+            f1 = 2 * (precision * recall) / (precision + recall)
+        else:
+            f1 = 0.0  # Both precision and recall are 0
         
         return {
             'precision': precision,
@@ -112,49 +126,66 @@ class BondPredictor:
         return best_result
 
 if __name__ == "__main__":
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(description='Evaluate bond predictions from structure models.')
+    parser.add_argument('-v', '--verbose', action='store_true',
+                      help='Print detailed results for each protein')
+    args = parser.parse_args()
+    
     # Load protein data
     with open('sactipeptides.json', 'r') as f:
         protein_data = json.load(f)
     
     predictor = BondPredictor()
     results = {}
+    base_dir = "structures"
     
-    # Evaluate all structure files
-    for filename in os.listdir('structures'):
-        if not filename.endswith(('.pdb', '.cif')):
+    # Iterate through model directories
+    for model_name in os.listdir(base_dir):
+        model_dir = os.path.join(base_dir, model_name)
+        if not os.path.isdir(model_dir):
             continue
             
-        # Parse filename
-        model_name, protein_name = filename.rsplit('.', 1)[0].split('_', 1)
+        results[model_name] = {
+            'per_protein_results': {},
+            'average_metrics': {}
+        }
         
-        # Find matching protein data
-        protein_key = None
-        for key in protein_data.keys():
-            if key.lower().replace('i', '') == protein_name.lower().replace('i', ''):
-                protein_key = key
-                break
-        
-        if protein_key is None:
-            print(f"Warning: No reference data found for {protein_name}")
-            continue
-        
-        if model_name not in results:
-            results[model_name] = {
-                'per_protein_results': {},
-                'average_metrics': {}
-            }
-        
-        try:
-            file_path = os.path.join('structures', filename)
-            evaluation = predictor.evaluate_structure(
-                file_path,
-                protein_data[protein_key]['sactibonds']
-            )
-            results[model_name]['per_protein_results'][protein_key] = evaluation
+        # Evaluate each structure file in the model directory
+        for filename in os.listdir(model_dir):
+            if not filename.endswith(('.pdb', '.cif')):
+                continue
+                
+            # Get protein name (without extension) and remove model prefix if present
+            protein_name = os.path.splitext(filename)[0]
+            if '_' in protein_name:
+                protein_name = '_'.join(protein_name.split('_')[1:])  # Remove model prefix
             
-        except Exception as e:
-            print(f"Error evaluating {filename}: {str(e)}")
-            continue
+            # Find matching protein data
+            protein_key = None
+            for key in protein_data.keys():
+                # Normalize both strings: lowercase, remove spaces and underscores
+                norm_key = key.lower().replace('_', '').replace(' ', '')
+                norm_name = protein_name.lower().replace('_', '').replace(' ', '')
+                if norm_key == norm_name:
+                    protein_key = key
+                    break
+            
+            if protein_key is None:
+                print(f"Warning: No reference data found for {protein_name}")
+                continue
+            
+            try:
+                file_path = os.path.join(model_dir, filename)
+                evaluation = predictor.evaluate_structure(
+                    file_path,
+                    protein_data[protein_key]['sactibonds']
+                )
+                results[model_name]['per_protein_results'][protein_key] = evaluation
+                
+            except Exception as e:
+                print(f"Error evaluating {filename}: {str(e)}")
+                continue
     
     # Calculate average metrics for each model
     for model_name, model_results in results.items():
@@ -174,13 +205,18 @@ if __name__ == "__main__":
         for metric, stats in model_results['average_metrics'].items():
             print(f"  {metric}: {stats['mean']:.3f} ± {stats['std']:.3f}")
         
-        print("\nPer-protein results:")
-        for protein, evaluation in model_results['per_protein_results'].items():
-            print(f"\n{protein}:")
-            print(f"  Model: {evaluation['model_index']}")
-            print(f"  Precision: {evaluation['metrics']['precision']:.3f}")
-            print(f"  Recall: {evaluation['metrics']['recall']:.3f}")
-            print(f"  F1 Score: {evaluation['metrics']['f1']:.3f}")
-            print("  Predicted bonds:")
-            for bond in evaluation['predicted_bonds']:
-                print(f"    Cys{bond[0]} -> CA{bond[1]}") 
+        if args.verbose:
+            print("\nPer-protein results:")
+            for protein, evaluation in model_results['per_protein_results'].items():
+                print(f"\n{protein}:")
+                print(f"  Model: {evaluation['model_index']}")
+                print(f"  Metrics:")
+                for metric, value in evaluation['metrics'].items():
+                    if metric not in ['predicted_bonds', 'reference_bonds']:
+                        print(f"    {metric}: {value:.3f}")
+                print("  Predicted bonds:")
+                for bond in evaluation['predicted_bonds']:
+                    print(f"    Cys{bond[0]} -> CA{bond[1]}")
+                print("  Reference bonds:")
+                for bond in evaluation['reference_bonds']:
+                    print(f"    Cys{bond[0]} -> CA{bond[1]}") 
