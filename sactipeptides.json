@@ -24,13 +24,13 @@
         "fasta": "sequences/huazacin.fasta",
         "sactibonds": [[4, 38], [8, 34], [12, 30], [16, 26]]
     },
-    "ruminococcin_C": {
+    "rum_C": {
         "fasta": "sequences/rum_C.fasta",
         "sactibonds": [[3, 16], [5, 12], [22, 42], [26, 34]]
     },
     "hyicin_4244": {
         "fasta": "sequences/hyicin_4244.fasta",
-        "sactibonds": [[4, 28], [7, 25], [10, 22], [13, 19]]
+        "sactibonds": [[4, 28], [7, 25], [13, 19]]
     },
     "streptosactin": {
         "fasta": "sequences/streptosactin.fasta",
