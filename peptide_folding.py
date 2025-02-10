@@ -16,11 +16,6 @@ class PeptideFolding:
             sequence = ''.join(line.strip() for line in lines if not line.startswith('>'))
         return sequence
 
-    """
-    ESMFold model:
-    https://github.com/facebookresearch/esm
-    """
-
     def predict_esmfold(self, sequence: str, output_path: str):
         """
         Predict structure using ESMFold API and save to output_path
@@ -35,12 +30,6 @@ class PeptideFolding:
         # Save PDB file
         with open(output_path, 'wb') as f:
             f.write(response.content)
-
-    """
-    AlphaFold 3 model: https://github.com/deepmind/alphafold
-    Prediction was done via the AlphaFold webserver interface: https://alphafoldserver.com/
-    Output is in mmCIF format. Seed: 42.
-    """       
 
     def predict_structures(self, protein_data: Dict, base_dir: str = "structures"):
         """
