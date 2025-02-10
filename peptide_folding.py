@@ -1,5 +1,4 @@
 import requests
-import tempfile
 import os
 from typing import List, Dict
 import json
@@ -8,7 +7,6 @@ class PeptideFolding:
     def __init__(self):
         self.models = {
             'esmfold': self.predict_esmfold
-            # We'll add others back as we implement them properly
         }
         
     def read_fasta(self, fasta_path: str) -> str:
@@ -44,25 +42,27 @@ class PeptideFolding:
     Output is in mmCIF format. Seed: 42.
     """       
 
-    def predict_structures(self, protein_data: Dict, output_dir: str = "structures"):
+    def predict_structures(self, protein_data: Dict, base_dir: str = "structures"):
         """
-        Predict structures for all proteins using all models
+        Predict structures for all proteins using all models.
+        Each model's predictions are saved in a subdirectory.
         """
-        # Create output directory if it doesn't exist
-        os.makedirs(output_dir, exist_ok=True)
-        
-        for protein_name, data in protein_data.items():
-            print(f"\nProcessing {protein_name}...")
-            sequence = self.read_fasta(data['fasta'])
+        for model_name, predict_func in self.models.items():
+            # Create model-specific directory
+            model_dir = os.path.join(base_dir, model_name)
+            os.makedirs(model_dir, exist_ok=True)
             
-            for model_name, predict_func in self.models.items():
-                output_path = os.path.join(output_dir, f"{model_name}_{protein_name}.pdb")
+            for protein_name, data in protein_data.items():
+                print(f"\nProcessing {protein_name} with {model_name}...")
+                sequence = self.read_fasta(data['fasta'])
+                
+                output_path = os.path.join(model_dir, f"{protein_name}.pdb")
                 
                 try:
                     predict_func(sequence, output_path)
-                    print(f"Generated structure for {protein_name} using {model_name}")
+                    print(f"Generated structure for {protein_name}")
                 except Exception as e:
-                    print(f"Error predicting structure for {protein_name} with {model_name}: {str(e)}")
+                    print(f"Error predicting structure for {protein_name}: {str(e)}")
 
 if __name__ == "__main__":
     # Load protein data
