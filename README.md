@@ -5,36 +5,46 @@ Evaluating protein structure prediction models by how closely they match known s
 
 ### Usage
 
-To compute the predicted structures for the peptides, run:
-```bash
-python peptide_folding.py
-```
-
-To evaluate the predicted structures, run:
+For cross-linking structure prediction evaluation, run:
 
 ```bash
 python structure_eval.py
 ```
+
+For bonds sequence location prediction evaluation, run:
+
+```bash
+python bonds_eval.py
+```
+
 
 ### Sources
 
 Sactibond structures for the following peptides:
 
 - Subtilosin A
-- Thuringin H
-- Thuringin CD alpha
-- Thuringin CD beta
+- Thurincin H
+- Thuricin CD alpha
+- Thuricin CD beta
+- Streptosactin
+- Huazacin
+- Qmp A
+- Skf B
+- Rum C
 
-Taken from:
+### Models evaluated to date
 
-[Flühe L, Marahiel MA. Radical S-adenosylmethionine enzyme catalyzed thioether bond formation in sactipeptide biosynthesis. Curr Opin Chem Biol. 2013;17(4):605-612. doi:10.1016/j.cbpa.2013.06.031](https://www.sciencedirect.com/science/article/pii/S1367593113001269)
+`ESMFold`: https://github.com/facebookresearch/esm
+Retrieved using the ESMFold API: https://esmatlas.com/. Script usage:
+```bash
+python peptide_folding.py
+```
+
+`AlphaFold 3`: https://github.com/deepmind/alphafold
+Retrieved using the AlphaFold webserver interface: https://alphafoldserver.com/
+
+ `AlphaFold 2`, `Boltz-1`. `RoseTTAFold2`, `OmegaFold`: retrieved using the ColabFold notebooks: https://github.com/sokrypton/ColabFold
 
 
-### Models
-
-Models evaluated to date:
-
-- ESMFold: https://github.com/facebookresearch/esm
-- AlphaFold 3: https://github.com/deepmind/alphafold
 
 
