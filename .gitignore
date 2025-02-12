@@ -36,3 +36,4 @@ wheels/
 
 # Project specific
 temp/ 
+logs/
