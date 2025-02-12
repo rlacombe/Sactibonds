@@ -72,14 +72,14 @@ if args.gdt:
     ax1.tick_params(axis='y', labelcolor=BAR_COLOR)
     ax1.legend(loc='upper left', fontsize=11)
     ax1.set_ylim(0, 25)
-    filename = 'models_evaluation_gdt.png'
+    filename = 'results_gdt.png'
 
 
 # Create second axis for RMSD if enabled
 if args.rmsd:
     if args.gdt:
         ax2 = ax1.twinx()
-        filename = 'models_evaluation_joint.png'
+        filename = 'results_joint.png'
 
     else:
         ax2 = ax1
@@ -94,7 +94,7 @@ if args.rmsd:
         rmsd_known = rmsd_known[sort_idx]
         rmsd_no = rmsd_no[sort_idx]
 
-        filename = 'models_evaluation_rmsd.png'
+        filename = 'results_rmsd.png'
 
     ax2.plot(x, rmsd_known, color=LINE_COLOR, linestyle='dotted', linewidth=3, marker='s',
              label='RMSD: known', alpha=0.5)
