@@ -1,43 +1,53 @@
 {
     "subtilosin_A": {
         "fasta": "sequences/subtilosin_A.fasta",
-        "sactibonds": [[4, 31], [7, 28], [13, 22]]
+        "sactibonds": [[4, 31], [7, 28], [13, 22]],
+        "pdb": "1PXQ"
     },
     "thurincin_H": {
         "fasta": "sequences/thurincin_H.fasta",
-        "sactibonds": [[4, 28], [7, 25], [10, 22], [13, 19]]
+        "sactibonds": [[4, 28], [7, 25], [10, 22], [13, 19]],
+        "pdb": "2LBZ"
     },
-    "skf_B": {
-        "fasta": "sequences/skf_B.fasta",
+    "skf_A": {
+        "fasta": "sequences/skf_A.fasta",
         "sactibonds": [[4, 12]],
-        "disulfide_bonds": [[1, 16]]
+        "disulfide_bonds": [[1, 16]],
+        "pdb": ""
     },
     "thuricin_CD_alpha": {
         "fasta": "sequences/thuricin_CD_alpha.fasta",
-        "sactibonds": [[5, 28], [9, 25], [13, 21]]
+        "sactibonds": [[5, 28], [9, 25], [13, 21]],
+        "pdb": "2L9X"
     },
     "thuricin_CD_beta": {
         "fasta": "sequences/thuricin_CD_beta.fasta",
-        "sactibonds": [[5, 28], [9, 25], [13, 21]]
+        "sactibonds": [[5, 28], [9, 25], [13, 21]],
+        "pdb": "2LA0"
     },
     "huazacin": {
         "fasta": "sequences/huazacin.fasta",
-        "sactibonds": [[4, 38], [8, 34], [12, 30], [16, 26]]
+        "sactibonds": [[4, 38], [8, 34], [12, 30], [16, 26]],
+        "pdb": ""
     },
     "rum_C": {
         "fasta": "sequences/rum_C.fasta",
-        "sactibonds": [[3, 16], [5, 12], [22, 42], [26, 34]]
+        "sactibonds": [[3, 16], [5, 12], [22, 42], [26, 34]],
+        "pdb": "6T33"
     },
     "hyicin_4244": {
         "fasta": "sequences/hyicin_4244.fasta",
-        "sactibonds": [[4, 28], [7, 25], [13, 19]]
+        "sactibonds": [[4, 28], [7, 25], [13, 19]],
+        "pdb": ""
     },
     "streptosactin": {
         "fasta": "sequences/streptosactin.fasta",
-        "sactibonds": [[4, 7], [10, 13]]
+        "sactibonds": [[4, 7], [10, 13]],
+        "pdb": ""
     },
     "qmp_A": {
         "fasta": "sequences/qmp_A.fasta",
-        "sactibonds": [[6, 4], [10, 8]]
+        "sactibonds": [[6, 4], [10, 8]],
+        "pdb": ""
     }
 }
