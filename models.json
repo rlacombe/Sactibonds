@@ -1,0 +1,10 @@
+{"models": 
+    {
+        "alphafold2": "AlphaFold 2",
+        "alphafold3": "AlphaFold 3",
+        "boltz1": "Boltz-1",
+        "esmfold": "ESM Fold",
+        "omegafold": "OmegaFold",
+        "rosettafold2": "RoseTTA Fold 2"
+    }
+}
