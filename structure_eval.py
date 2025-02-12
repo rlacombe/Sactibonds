@@ -345,7 +345,7 @@ if __name__ == "__main__":
         
         summary_results[model] = {
             'gdt_ts': {
-                'all': float(f"{np.mean([*pdb_results['gdt_ts'], *no_pdb_results['gdt_ts']]):.2f}"),
+                'all': float(f"{results[model]['average_gdt_ts']:.2f}"),
                 'pdb': float(f"{np.mean(pdb_results['gdt_ts']):.2f}") if pdb_results['gdt_ts'] else None,
                 'no_pdb': float(f"{np.mean(no_pdb_results['gdt_ts']):.2f}") if no_pdb_results['gdt_ts'] else None
             },
@@ -357,8 +357,13 @@ if __name__ == "__main__":
         }
     
     # Save sorted summary results to JSON
-    with open('results.json', 'w') as f:
-        json.dump(summary_results, f, indent=4)
+    print(f"\nWriting results to results.json...")
+    try:
+        with open('results.json', 'w') as f:
+            json.dump(summary_results, f, indent=4)
+        print("Successfully wrote results to results.json")
+    except Exception as e:
+        print(f"Error writing results.json: {str(e)}")
     
     # Print detailed results for reference
     for model, data in results.items():
