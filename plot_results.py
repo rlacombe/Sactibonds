@@ -43,7 +43,7 @@ methods = [model_names.get(m, m) for m in methods]
 args = parse_args()
 
 # Plotting
-fig, ax1 = plt.subplots(figsize=(6, 4))
+fig, ax1 = plt.subplots(figsize=(5, 3.5))
 
 x = np.arange(len(methods))
 width = 0.25 # Thinner bars
@@ -62,9 +62,9 @@ if args.gdt:
     rmsd_no = rmsd_no[sort_idx]
 
     # Plot GDT_TS bars
-    rects2 = ax1.bar(x - width/2, gdt_known, 0.9*width, label='GDT_TS: known', 
+    rects2 = ax1.bar(x - width/2, gdt_known, 0.9*width, label='Known', 
                      color=BAR_COLOR, alpha=0.5)
-    rects1 = ax1.bar(x + width/2, gdt_no, 0.9*width, label='GDT_TS: unknown', 
+    rects1 = ax1.bar(x + width/2, gdt_no, 0.9*width, label='Unknown', 
                      color=BAR_COLOR, alpha=1.0)
     
     # Configure first axis (GDT_TS)
@@ -97,9 +97,9 @@ if args.rmsd:
         filename = 'results_rmsd.png'
 
     ax2.plot(x, rmsd_known, color=LINE_COLOR, linestyle='dotted', linewidth=2, marker='s',
-             label='RMSD: known', alpha=0.5)
+             label='Known', alpha=0.5)
     ax2.plot(x, rmsd_no, color=LINE_COLOR, linestyle='dashed', linewidth=2, marker='o',
-             label='RMSD: unknown', alpha=1.0)
+             label='Unknown', alpha=1.0)
     ax2.set_ylabel('RMSD (Å)', color=LINE_COLOR, fontsize=12)
     ax2.tick_params(axis='y', labelcolor=LINE_COLOR)
     ax2.set_ylim(0, 25)
