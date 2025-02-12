@@ -5,6 +5,22 @@ import os
 from typing import List, Tuple, Dict, Set
 import json
 import argparse
+from datetime import datetime
+import sys
+
+class Logger:
+    def __init__(self, log_file=None):
+        self.terminal = sys.stdout
+        self.log_file = log_file
+
+    def write(self, message):
+        self.terminal.write(message)
+        if self.log_file:
+            self.log_file.write(message)
+
+    def flush(self):
+        # Needed for Python 3 compatibility
+        pass
 
 class BondPredictor:
     def __init__(self, max_distance: float = 5.43):
@@ -130,7 +146,21 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Evaluate bond predictions from structure models.')
     parser.add_argument('-v', '--verbose', action='store_true',
                       help='Print detailed results for each protein')
+    parser.add_argument('-l', '--log', action='store_true',
+                      help='Save output to a log file')
     args = parser.parse_args()
+    
+    # Setup logging if requested
+    if args.log:
+        # Create logs directory if it doesn't exist
+        os.makedirs('logs', exist_ok=True)
+        
+        # Create log file with timestamp
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        log_path = os.path.join('logs', f'bonds_eval_{timestamp}.log')
+        log_file = open(log_path, 'w')
+        sys.stdout = Logger(log_file)
+        print(f"Logging to: {log_path}")
     
     # Load protein data
     with open('sactipeptides.json', 'r') as f:
@@ -215,8 +245,13 @@ if __name__ == "__main__":
                     if metric not in ['predicted_bonds', 'reference_bonds']:
                         print(f"    {metric}: {value:.3f}")
                 print("  Predicted bonds:")
-                for bond in evaluation['predicted_bonds']:
+                for bond in evaluation['metrics']['predicted_bonds']:
                     print(f"    Cys{bond[0]} -> CA{bond[1]}")
                 print("  Reference bonds:")
-                for bond in evaluation['reference_bonds']:
+                for bond in evaluation['metrics']['reference_bonds']:
                     print(f"    Cys{bond[0]} -> CA{bond[1]}") 
+    
+    # Close log file if we were logging
+    if args.log:
+        log_file.close()
+        sys.stdout = sys.stdout.terminal  # Restore normal stdout 
