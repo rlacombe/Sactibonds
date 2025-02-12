@@ -43,7 +43,7 @@ methods = [model_names.get(m, m) for m in methods]
 args = parse_args()
 
 # Plotting
-fig, ax1 = plt.subplots(figsize=(8, 6))
+fig, ax1 = plt.subplots(figsize=(6, 4))
 
 x = np.arange(len(methods))
 width = 0.25 # Thinner bars
@@ -96,9 +96,9 @@ if args.rmsd:
 
         filename = 'results_rmsd.png'
 
-    ax2.plot(x, rmsd_known, color=LINE_COLOR, linestyle='dotted', linewidth=3, marker='s',
+    ax2.plot(x, rmsd_known, color=LINE_COLOR, linestyle='dotted', linewidth=2, marker='s',
              label='RMSD: known', alpha=0.5)
-    ax2.plot(x, rmsd_no, color=LINE_COLOR, linestyle='dashed', linewidth=3, marker='o',
+    ax2.plot(x, rmsd_no, color=LINE_COLOR, linestyle='dashed', linewidth=2, marker='o',
              label='RMSD: unknown', alpha=1.0)
     ax2.set_ylabel('RMSD (Å)', color=LINE_COLOR, fontsize=12)
     ax2.tick_params(axis='y', labelcolor=LINE_COLOR)

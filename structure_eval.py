@@ -345,14 +345,14 @@ if __name__ == "__main__":
         
         summary_results[model] = {
             'gdt_ts': {
-                'all': float(np.mean([*pdb_results['gdt_ts'], *no_pdb_results['gdt_ts']])),
-                'pdb': float(np.mean(pdb_results['gdt_ts'])) if pdb_results['gdt_ts'] else None,
-                'no_pdb': float(np.mean(no_pdb_results['gdt_ts'])) if no_pdb_results['gdt_ts'] else None
+                'all': float(f"{np.mean([*pdb_results['gdt_ts'], *no_pdb_results['gdt_ts']]):.2f}"),
+                'pdb': float(f"{np.mean(pdb_results['gdt_ts']):.2f}") if pdb_results['gdt_ts'] else None,
+                'no_pdb': float(f"{np.mean(no_pdb_results['gdt_ts']):.2f}") if no_pdb_results['gdt_ts'] else None
             },
             'rmsd': {
-                'all': float(results[model]['average_rmsd']),
-                'pdb': float(np.mean(pdb_results['rmsd'])) if pdb_results['rmsd'] else None,
-                'no_pdb': float(np.mean(no_pdb_results['rmsd'])) if no_pdb_results['rmsd'] else None
+                'all': float(f"{results[model]['average_rmsd']:.2f}"),
+                'pdb': float(f"{np.mean(pdb_results['rmsd']):.2f}") if pdb_results['rmsd'] else None,
+                'no_pdb': float(f"{np.mean(no_pdb_results['rmsd']):.2f}") if no_pdb_results['rmsd'] else None
             }
         }
     
