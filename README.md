@@ -7,9 +7,7 @@ Evaluating protein structure prediction models by how closely they match known s
 
 ### Paper 
 
-Download the paper here:
-
-[Link to pre-print](Non_Canonical_Crosslinks_Confound_Evolutionary_Protein_Structure_Models.pdf).
+Download the paper here: [Link to pre-print](Non_Canonical_Crosslinks_Confound_Evolutionary_Protein_Structure_Models.pdf).
 
 
 ### Usage
@@ -43,16 +41,22 @@ Sactibond structures for the following peptides:
 
 ### Models evaluated to date
 
-`ESMFold`: https://github.com/facebookresearch/esm
-Retrieved using the ESMFold API: https://esmatlas.com/. Script usage:
+`ESMFold`:
+
+Retrieved using the ESMFold API: https://esmatlas.com/. 
+
+Script usage:
 ```bash
 python peptide_folding.py
 ```
 
-`AlphaFold 3`: https://github.com/deepmind/alphafold
+`AlphaFold 3`:
+
 Retrieved using the AlphaFold webserver interface: https://alphafoldserver.com/
 
-`AlphaFold 2`, `Boltz-1`. `RoseTTAFold2`, `OmegaFold`: retrieved using the ColabFold notebooks: https://github.com/sokrypton/ColabFold
+`AlphaFold 2`, `Boltz-1`. `RoseTTAFold2`, `OmegaFold`: 
+
+Retrieved using the ColabFold notebooks: https://github.com/sokrypton/ColabFold
 
 
 ### Citation
