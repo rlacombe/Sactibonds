@@ -1,11 +1,15 @@
 # Sactibonds
 Evaluating protein structure prediction models by how closely they match known sulfur-to-alpha-carbon post-translational modifications.
 
-### Paper 
-
-[Read the paper](Non_Canonical_Crosslinks_Confound_Evolutionary_Protein_Structure_Models.pdf).
 
 ![Structures of some known sactipeptides](sactibonds.png)
+
+
+### Paper 
+
+Download the paper here:
+
+[Link to pre-print](Non_Canonical_Crosslinks_Confound_Evolutionary_Protein_Structure_Models.pdf).
 
 
 ### Usage
