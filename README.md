@@ -1,7 +1,12 @@
 # Sactibonds
 Evaluating protein structure prediction models by how closely they match known sulfur-to-alpha-carbon post-translational modifications.
 
+### Paper 
+
+[Read the paper](Non_Canonical_Crosslinks_Confound_Evolutionary_Protein_Structure_Models.pdf).
+
 ![Structures of some known sactipeptides](sactibonds.png)
+
 
 ### Usage
 
@@ -43,8 +48,15 @@ python peptide_folding.py
 `AlphaFold 3`: https://github.com/deepmind/alphafold
 Retrieved using the AlphaFold webserver interface: https://alphafoldserver.com/
 
- `AlphaFold 2`, `Boltz-1`. `RoseTTAFold2`, `OmegaFold`: retrieved using the ColabFold notebooks: https://github.com/sokrypton/ColabFold
+`AlphaFold 2`, `Boltz-1`. `RoseTTAFold2`, `OmegaFold`: retrieved using the ColabFold notebooks: https://github.com/sokrypton/ColabFold
 
 
+### Citation
+
+If you find this useful, please cite as follows:
+
+```
+Romain Lacombe. Non-canonical crosslinks confound evolutionary protein structure models. arXiv, 2025.
+```
 
 
