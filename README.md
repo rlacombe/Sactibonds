@@ -7,7 +7,7 @@ Evaluating protein structure prediction models by how closely they match known s
 
 ### Paper 
 
-Download the paper here: [Link to pre-print](Non_Canonical_Crosslinks_Confound_Evolutionary_Protein_Structure_Models.pdf).
+Download the paper on [bioRxiv here](https://www.biorxiv.org/content/10.1101/2025.03.17.643596v1).
 
 
 ### Usage
