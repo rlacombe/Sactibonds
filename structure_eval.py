@@ -301,6 +301,8 @@ if __name__ == "__main__":
                       help='Print detailed results for each protein')
     parser.add_argument('-l', '--log', action='store_true',
                       help='Save output to a log file')
+    parser.add_argument('-m', '--models', default='models.json',
+                      help='Path to JSON file containing model names (default: models.json)')
     args = parser.parse_args()
     
     # Setup logging if requested
@@ -322,9 +324,30 @@ if __name__ == "__main__":
     except FileNotFoundError:
         print("Error: sactipeptides.json not found!")
         exit(1)
-        
+    
+    # Load model data from JSON
+    try:
+        with open(args.models, 'r') as f:
+            model_data = json.load(f)
+            model_names = model_data['models']  # Get the nested dictionary
+    except FileNotFoundError:
+        print(f"Error: {args.models} not found!")
+        exit(1)
+    
     evaluator = SactibondEvaluator()
-    results = evaluator.evaluate_structures(protein_data)
+    
+    # Only evaluate models listed in models.json
+    results = {}
+    for model_name in model_names.keys():
+        model_dir = os.path.join('structures', model_name)
+        if os.path.isdir(model_dir):
+            print(f"\nEvaluating {model_name}...")
+            model_results = evaluator._evaluate_model_structures(
+                model_name, model_dir, protein_data, results,
+                get_protein_name=lambda f: os.path.splitext(f)[0]
+            )
+        else:
+            print(f"Warning: Directory not found for model {model_name}: {model_dir}")
     
     # Prepare summary results
     summary_results = {}
