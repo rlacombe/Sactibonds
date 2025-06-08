@@ -58,6 +58,10 @@ Retrieved using the AlphaFold webserver interface: https://alphafoldserver.com/
 
 Retrieved using the ColabFold notebooks: https://github.com/sokrypton/ColabFold
 
+`Boltz-2`:
+
+Retrieved using the Tamarind Bio server: https://app.tamarind.bio/app
+
 
 ### Citation
 
