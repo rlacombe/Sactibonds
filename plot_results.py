@@ -43,7 +43,7 @@ methods = [model_names.get(m, m) for m in methods]
 args = parse_args()
 
 # Plotting
-fig, ax1 = plt.subplots(figsize=(5, 3.5))
+fig, ax1 = plt.subplots(figsize=(8, 5)) # Paper: 5, 3.5
 
 x = np.arange(len(methods))
 width = 0.25 # Thinner bars

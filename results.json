@@ -35,6 +35,18 @@
             "no_pdb": 6.94
         }
     },
+    "boltz2": {
+        "gdt_ts": {
+            "all": 15.21,
+            "pdb": 8.33,
+            "no_pdb": 22.08
+        },
+        "rmsd": {
+            "all": 10.92,
+            "pdb": 14.78,
+            "no_pdb": 7.06
+        }
+    },
     "esmfold": {
         "gdt_ts": {
             "all": 5.0,
